@@ -1,15 +1,17 @@
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, shallowEqual, useDispatch } from "react-redux";
-import { createFolder } from "../../../redux/actionCreators/fileFoldersActionCreator.js";
+import { createFile } from "../../../redux/actionCreators/fileFoldersActionCreator.js";
+//import { createFolder } from "../../../redux/actionCreators/fileFoldersActionCreator.js";
 
-const CreateFolder = ({ setIsCreatedModalOpen }) => {
-  const [folderName, setFolderName] = useState("");
+const CreateFile = ({ setIsCreateFileModalOpen }) => {
+  const [fileName, setFileName] = useState("");
+  const [success , setSuccess] = useState(false)
 
-  const { userFolders, user, currentFolder , currentFolderData } = useSelector(
+  const { userFiles, user, currentFolder , currentFolderData } = useSelector(
     (state) => ({
-      userFolders: state.fileFolders.userFolders,
+      userFiles: state.fileFolders.userFiles,
       user: state.auth.user,
       currentFolder: state.fileFolders.currentFolder,
       currentFolderData : state.fileFolders.userFolders.find((folder) => folder.docId== state.fileFolders.currentFolder)
@@ -18,12 +20,22 @@ const CreateFolder = ({ setIsCreatedModalOpen }) => {
   );
 
   const dispatch = useDispatch();
+  useEffect(()=>{
+     if(success){
+      setFileName(""),
+      setSuccess(false);
+      setIsCreateFileModalOpen(false);
+     }
+  },[success]);
 
-  const checkFolderAlreadyPresent = (name) => {
-   const folderPresent =userFolders
-   .filter((folder)=>folder.data.parent==currentFolder)
+  const checkFileAlreadyPresent = (name , ext) => {
+    if(!ext){
+      name= name +".txt";
+    }
+   const filePresent =userFiles
+   .filter((file)=>file.data.parent==currentFolder)
    .find((userFolder)=>userFolder.data.name==name);
-   if(folderPresent ){
+   if(filePresent ){
     return true;
    }else{
     return false;
@@ -31,28 +43,39 @@ const CreateFolder = ({ setIsCreatedModalOpen }) => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (folderName) {
-      if (folderName?.length > 3) {
-        if (!checkFolderAlreadyPresent(folderName)) {
+    if (fileName) {
+      if (fileName?.length > 3) {
+        //check file extension
+        let extension=false;
+
+        if(fileName.split(".").length >1){
+          extension=true;
+        }
+        if (!checkFileAlreadyPresent(fileName , extension)) {
           const data = {
             createdAt: new Date(),
-            name: folderName,
+            name: extension ? fileName : `${fileName}.txt`,
             userId: user.uid,
             createdBy: user.displayName,
             path: currentFolder == "root" ? [] : [ ...currentFolderData?.data.path , currentFolder],
             parent: currentFolder,
             lastAccessed: null,
             updatedAt: new Date(),
+            extension : extension ? fileName.split(".")[1] : "txt",
+            data: "",
+            url :null,
           };
-          dispatch(createFolder(data));
+          dispatch(createFile(data , setSuccess));
+
+          console.log("data"+ data);
         } else {
-          alert("folder already present");
+          alert("file already present");
         }
       } else {
-        alert("Folder name must be of at least 3 characters");
+        alert("File name must be of at least 3 characters");
       }
     } else {
-      alert("Folder name cannot be empty");
+      alert("File name cannot be empty");
     }
   };
   return (
@@ -63,10 +86,10 @@ const CreateFolder = ({ setIsCreatedModalOpen }) => {
       <div className="row align-items-center justify-content-center">
         <div className=" col-md-4 mt-5 bg-white rounded border p-4">
           <div className=" d-flex justify-content-between">
-            <h4>Create Folder</h4>
+            <h4>Create File</h4>
             <button
               className="btn"
-              onClick={() => setIsCreatedModalOpen(false)}
+              onClick={() => setIsCreateFileModalOpen(false)}
             >
               <FontAwesomeIcon
                 icon={faTimes}
@@ -82,17 +105,17 @@ const CreateFolder = ({ setIsCreatedModalOpen }) => {
                 <input
                   type="text"
                   className="form-control"
-                  id="folderName"
-                  placeholder="folder Name"
-                  value={folderName}
-                  onChange={(e) => setFolderName(e.target.value)}
+                  id="fileName"
+                  placeholder="file name  example index.html , index.txt , index.php "
+                  value={fileName}
+                  onChange={(e) => setFileName(e.target.value)}
                 />
               </div>
               <button
                 type="submit"
                 className="btn btn-primary mt-5 form-control"
               >
-                Create Folder;
+                Create File;
               </button>
             </form>
           </div>
@@ -102,4 +125,4 @@ const CreateFolder = ({ setIsCreatedModalOpen }) => {
   );
 };
 
-export default CreateFolder;
+export default CreateFile;

@@ -16,7 +16,7 @@ const Showitems = ({ title, items, type }) => {
 
       navigate(`/dashboard/folder/${itemId}`);
     } else {
-      alert("file Clicked !");
+      navigate(`/dashboard/file/${itemId}`);
     }
   };
 

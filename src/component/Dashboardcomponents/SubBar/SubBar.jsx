@@ -11,18 +11,17 @@ import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { Link } from "react-router-dom";
 import { changeFolders } from "../../../redux/actionCreators/fileFoldersActionCreator.js";
 
-const SubBar = ({ setIsCreatedModalOpen }) => {
+const SubBar = ({ setIsCreatedModalOpen, setIsCreateFileModalOpen , setIsFileUploadModalOpen}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-
-  const { currentFolder, currentFolderData, useFolders } = useSelector(
+  const { currentFolder, currentFolderData, userFolders } = useSelector(
     (state) => ({
       currentFolder: state?.fileFolders?.currentFolder,
       currentFolderData: state?.fileFolders?.userFolders?.find(
         (userFolder) => userFolder.docId === state.fileFolders.currentFolder
       ),
-      useFolders: state?.fileFolders?.userFolders,
+      userFolders: state?.fileFolders?.userFolders,
     }),
     shallowEqual
   );
@@ -41,7 +40,7 @@ const SubBar = ({ setIsCreatedModalOpen }) => {
                 onClick={() => handleNavigate("/dashboard", "root")}
                 className="breadcrump-item btn btn-link text-decoration-none "
               >
-                Root
+                Root/
               </button>
               {currentFolderData?.data.path.map((folder, index) => (
                 <button
@@ -50,13 +49,20 @@ const SubBar = ({ setIsCreatedModalOpen }) => {
                   onClick={() =>
                     handleNavigate(
                       `/dashboard/folder/${
-                        useFolders.find((useFolder) => folder == useFolder.docId).docId
+                        userFolders.find(
+                          (userFolder) => folder == userFolder.docId
+                        ).docId
                       }`,
-                      useFolders.find((useFolder) => folder == useFolder.docId).docId
+                      userFolders.find(
+                        (userFolder) => folder == userFolder.docId
+                      ).docId
                     )
                   }
                 >
-                  {useFolders.find((useFolder) => folder == useFolder.docId).data.name}
+                  {
+                    userFolders.find((userFolder) => folder == userFolder.docId)
+                      .data.name
+                  }/
                 </button>
               ))}
               <li className="breadcrump-item active">
@@ -73,12 +79,17 @@ const SubBar = ({ setIsCreatedModalOpen }) => {
 
       <ul className="navbar-nav ms-auto flex-row me-5">
         <li className="nav-item ">
-          <button className="btn btn-outline-dark mx-2">
+          <button className="btn btn-outline-dark mx-2"
+            onClick={()=>setIsFileUploadModalOpen(true)}
+            >
             <FontAwesomeIcon icon={faFileUpload} /> &nbsp; Upload Files
           </button>
         </li>
         <li className="nav-item  mx-2">
-          <button className="btn btn-outline-dark ">
+          <button
+            className="btn btn-outline-dark "
+            onClick={() => setIsCreateFileModalOpen(true)}
+          >
             <FontAwesomeIcon icon={faFileAlt} /> &nbsp; Create Files
           </button>
         </li>

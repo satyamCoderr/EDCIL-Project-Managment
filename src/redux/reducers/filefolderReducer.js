@@ -30,6 +30,28 @@ const filefolderReducer = (state = initialState, action) => {
         ...state,
         currentFolder: action.payload,
       };
+    case types.ADD_FILES:
+      return {
+        ...state,
+        userFiles: action.payload,
+      };
+    case types.CREATE_FILE:
+      return {
+        ...state,
+        userFiles: [...state.userFiles, action.payload],
+      };
+
+    case types.SET_FILE_DATA:
+      const { fileId, data } = action.payload;
+      const allFiles = action.userFiles;
+      const currentFile = allFiles.find((file) => file.docId === fileId);
+      currentFile.data.data = data;
+      return {
+        ...state,
+        userFiles: state.userFiles.map((file) =>
+          file.docId === fileId ? currentFile : file
+        ),
+      };
     default:
       return state;
   }

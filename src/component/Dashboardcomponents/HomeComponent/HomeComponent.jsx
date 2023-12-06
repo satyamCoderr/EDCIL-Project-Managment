@@ -2,17 +2,14 @@ import Showitems from "../ShowItems/Showitems.jsx";
 import { useSelector, shallowEqual } from "react-redux";
 
 const HomeComponent = () => {
-  const folders = ["New folder", "New folder 2"];
-  const files = [
-    { data: { name: "New file" } },
-    { data: { name: "New file 2" } },
-  ];
-
-  const { isLoading, userFolders } = useSelector(
+  const { isLoading, userFolders, userFiles } = useSelector(
     (state) => ({
       isLoading: state.fileFolders.isLoading,
       userFolders: state.fileFolders.userFolders.filter(
-        (userFolder) => userFolder.data.parent=="root"
+        (userFolder) => userFolder.data.parent == "root"
+      ),
+      userFiles: state.fileFolders.userFiles.filter(
+        (file) => file.data.parent === "root"
       ),
     }),
     shallowEqual
@@ -28,7 +25,16 @@ const HomeComponent = () => {
             type={"folder"}
             items={userFolders}
           />
-          <Showitems title={"Created Files"} type={"file"} items={files} />
+          <Showitems
+            title={"Created Files"}
+            type={"file"}
+            items={userFiles.filter((file) => file.data.url == null)}
+          />
+          <Showitems
+            title={"Uploaded Files"}
+            type={"file"}
+            items={userFiles.filter((file) => file.data.data == null)}
+          />
         </>
       )}
     </div>
