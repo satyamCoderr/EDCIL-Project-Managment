@@ -11,7 +11,12 @@ import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { Link } from "react-router-dom";
 import { changeFolders } from "../../../redux/actionCreators/fileFoldersActionCreator.js";
 
-const SubBar = ({ setIsCreatedModalOpen, setIsCreateFileModalOpen , setIsFileUploadModalOpen}) => {
+
+const SubBar = ({
+  setIsCreatedModalOpen,
+  setIsCreateFileModalOpen,
+  setIsFileUploadModalOpen,
+}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -31,7 +36,7 @@ const SubBar = ({ setIsCreatedModalOpen, setIsCreateFileModalOpen , setIsFileUpl
     dispatch(changeFolders(id));
   };
   return (
-    <nav className="navbar navbar-expand-ig mt-2 navbar-light bg-white py-2  ">
+    <nav className="navbar navbar-expand-ig mt-2 navbar-light bg-white  py-2  ">
       <nav className="ms-5" aria-label="breadcrumb">
         <ol className="breadcrumb d-flex align-items-center">
           {currentFolder != "root" ? (
@@ -61,8 +66,9 @@ const SubBar = ({ setIsCreatedModalOpen, setIsCreateFileModalOpen , setIsFileUpl
                 >
                   {
                     userFolders.find((userFolder) => folder == userFolder.docId)
-                      .data.name
-                  }/
+                      .data?.name
+                  }
+                  /
                 </button>
               ))}
               <li className="breadcrump-item active">
@@ -79,9 +85,10 @@ const SubBar = ({ setIsCreatedModalOpen, setIsCreateFileModalOpen , setIsFileUpl
 
       <ul className="navbar-nav ms-auto flex-row me-5">
         <li className="nav-item ">
-          <button className="btn btn-outline-dark mx-2"
-            onClick={()=>setIsFileUploadModalOpen(true)}
-            >
+          <button
+            className="btn btn-outline-dark mx-2"
+            onClick={() => setIsFileUploadModalOpen(true)}
+          >
             <FontAwesomeIcon icon={faFileUpload} /> &nbsp; Upload Files
           </button>
         </li>

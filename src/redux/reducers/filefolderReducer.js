@@ -43,7 +43,7 @@ const filefolderReducer = (state = initialState, action) => {
 
     case types.SET_FILE_DATA:
       const { fileId, data } = action.payload;
-      const allFiles = action.userFiles;
+      const allFiles = state.userFiles;
       const currentFile = allFiles.find((file) => file.docId === fileId);
       currentFile.data.data = data;
       return {

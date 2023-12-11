@@ -3,20 +3,27 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, shallowEqual } from "react-redux";
 import CodeEditor from "./CodeEditor.jsx";
 import { useState, useEffect } from "react";
+import MyPDFViewer from "../../PdfViewer/index.jsx";
 const FileComponent = () => {
   const { fileId } = useParams();
   const navigate = useNavigate();
   const [fileData, setFileData] = useState("");
   const [prevFileData, setPrevFileData] = useState("");
 
-  const { currentFile } = useSelector(
+  const { currentFile, isAuthenticated } = useSelector(
     (state) => ({
       currentFile: state.fileFolders.userFiles.find(
         (file) => file.docId === fileId
       ),
+      isAuthenticated: state.auth.isAuthenticated,
     }),
     shallowEqual
   );
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+  }, []);
 
   useEffect(() => {
     if (currentFile) {
@@ -25,39 +32,90 @@ const FileComponent = () => {
     }
   }, [currentFile, currentFile?.data?.data]);
 
-  return (
-    <div>
-      {fileData != null ? (
-        <>
-          <Header
-            fileName={currentFile?.data?.name}
-            fileData={fileData}
-            prevFileData={prevFileData}
-            fileId={fileId}
-          />
+  const downloadFile = () => {
+    const element = document.createElement("a");
+    element.setAttribute("href", currentFile?.data?.url);
+    element.setAttribute("download", currentFile?.data?.name);
+    element.setAttribute("target", "_blank");
+    element.style.display = "none";
+    document.body.appendChild(element);
 
-          <CodeEditor
-            fileName={currentFile?.data?.name}
-            data={fileData}
-            setData={setFileData}
-          />
-        </>
-      ) : (
-        <>
-          <h1 className="display-1 my-5 text-center">
-            uploaded files preview coming soon
-          </h1>
+    element.click();
+    document.body.removeChild(element);
+  };
+  if (isAuthenticated)
+    return (
+      <div>
+        {isAuthenticated && fileData != null ? (
+          <>
+            <Header
+              fileName={currentFile?.data?.name}
+              fileData={fileData}
+              prevFileData={prevFileData}
+              fileId={fileId}
+            />
 
-          <button
-            className="btn btn-primary ms-auto"
-            onClick={() => navigate(-1)}
+            <CodeEditor
+              fileName={currentFile?.data?.name}
+              data={fileData}
+              setData={setFileData}
+            />
+          </>
+        ) : (
+          <div
+            className="postition-fixed 
+        left-0 top-0 w-100 h-100 bg-black text-white"
           >
-            Go Back
-          </button>
-        </>
-      )}
-    </div>
-  );
+            {/* sub menu bar */}
+            <div className="d-flex py-4 mt-4 px-5 justify-content-between align-items-center ">
+              <p title={currentFile.data.name} className="my-0">
+                {currentFile.data.name.length > 40
+                  ? currentFile.data.name.slice(0, 40) +
+                    "... ." +
+                    currentFile.data.extension
+                  : currentFile.data.name}
+              </p>
+              <div className="d-flex align-items-center me-5 ">
+                <button
+                  className="btn btn-sm btn-outline-light me-2"
+                  onClick={() => navigate(-1)}
+                >
+                  <i className="fas fa-arrow-left"></i>
+                  Go Back
+                </button>
+                <button
+                  className="btn btn-sm btn-primary"
+                  onClick={() => downloadFile()}
+                >
+                  {" "}
+                  Download{" "}
+                </button>
+              </div>
+            </div>
+            <div className="w-100 m-4 img-fluid" style={{ height: "650px" }}>
+              {currentFile.data.extension.includes("png") ||
+              currentFile.data.extension.includes("jpg") ||
+              currentFile.data.extension.includes("jpeg") ||
+              currentFile.data.extension.includes("gif") ? (
+                <img
+                  src={currentFile.data.url}
+                  alt={currentFile.data.name}
+                  className="w-100 h-100"
+                />
+              ) : currentFile.data.extension.includes("pdf") ? (
+                // <iframe src={currentFile.data.url} width="80%" height="100%"></iframe>
+                <MyPDFViewer url={currentFile.data.url} />
+              ) : (
+                <div className="w-100 h-100 d-flex justify-content-center align-items-center">
+                  <p className="text-center">File Type not supported ...</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  return <div> Login first</div>;
 };
 
 export default FileComponent;

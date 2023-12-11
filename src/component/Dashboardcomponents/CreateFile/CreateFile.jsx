@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { useSelector, shallowEqual, useDispatch } from "react-redux";
 import { createFile } from "../../../redux/actionCreators/fileFoldersActionCreator.js";
+import {toast} from "react-toastify";
 //import { createFolder } from "../../../redux/actionCreators/fileFoldersActionCreator.js";
 
 const CreateFile = ({ setIsCreateFileModalOpen }) => {
@@ -69,13 +70,13 @@ const CreateFile = ({ setIsCreateFileModalOpen }) => {
 
           console.log("data"+ data);
         } else {
-          alert("file already present");
+          toast.error("file already present");
         }
       } else {
-        alert("File name must be of at least 3 characters");
+        toast.error("File name must be of at least 3 characters");
       }
     } else {
-      alert("File name cannot be empty");
+     toast.error("File name cannot be empty");
     }
   };
   return (

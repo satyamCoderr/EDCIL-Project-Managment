@@ -5,12 +5,20 @@ const Homepage = () => {
   return (
     <>
       <NavigationComponent />
-      <img src="https://www.edcilindia.co.in/images/EdCIL.png" class="img-fluid" alt="Responsive image" ></img>
-      <h1 className="display-1 my-5 text-center text-secondary" >
-        
+
+      {/* <h1 className="display-1 my-5 text-center text-secondary" >
+
         WELCOME TO THE EDCIL PROJECT MANAGMENT SYSTEM
-      </h1>
-      
+      </h1> */}
+
+      <div>
+        <img
+          src="src\pages\Homepage\homepageBanner.png"          
+          className="img-responsive mx-auto d-block"
+          style={{ height: "500px", width: "60%", }}
+          alt="Responsive image"
+        />
+      </div>
     </>
   );
 };

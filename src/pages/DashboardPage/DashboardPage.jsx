@@ -73,6 +73,9 @@ const DashboardPage = () => {
       <Routes>
         <Route path="" element={<HomeComponent />} />
         <Route path="folder/:folderId" element={<FolderComponent />} />
+
+        
+
         <Route path="file/:fileId" element={<FileComponent />} />
       </Routes>
     </>

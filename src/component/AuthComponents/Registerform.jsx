@@ -2,7 +2,7 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 import { signUpUser } from '../../redux/actionCreators/authActionCreators';
 import { useNavigate } from 'react-router-dom';
-
+import {toast} from "react-toastify";
 
 export const Registerform = () => {
     const [name, setName] = React.useState("");
@@ -16,11 +16,11 @@ export const Registerform = () => {
     e.preventDefault();
     if(!name || !email || !password || !passwordConfirmation){
 
-      alert("Please fill in all the fields ");
+      toast.error("Please fill in all the fields ");
       return;
     }
      if(password != passwordConfirmation){
-        alert("Password do not match");
+        toast.error("Password do not match");
         return;
       }
       
